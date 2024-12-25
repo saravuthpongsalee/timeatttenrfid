@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Mitr:wght@200;300;400;500;600;700&family=Prompt&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <title>RFID Web App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Mitr', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+        }
+
+        section#menu,
+        section#register,
+        section#working section#edit {
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <section id="menu">
+            <!-- <div id="menu">
+                <h1>เมนูหลัก</h1>
+                <button onclick="navigate('working')">บันทึกเวลาเข้า-ออก</button>
+                <button onclick="navigate('register')">ลงทะเบียน</button>
+              </div> -->
+            <div class="card">
+                <div class="card-header  bg-primary-subtle text-dark p-2">
+                    <div class="fs-2 w-100 text-center">
+                        <i class="bi bi-house-door"></i>
+                        เมนูหลัก
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <button class="btn btn-primary" onclick="navigate('working')" style="width: 100%">
+                                <i class="bi bi-clock"></i> บันทึกเวลาเข้า-ออก
+                            </button>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-primary" onclick="navigate('register')" style="width: 100%">
+                                <i class="bi bi-person-plus"></i> ลงทะเบียน
+                            </button>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-primary" onclick="navigate('edit')" style="width: 100%">
+                                <i class="bi bi-search"></i> ค้นหาข้อมูล
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="working">
+            <!-- <h2>บันทึกเวลาเข้า-ออก</h2>
+            <label>รหัสบัตร: <input id="workCardId" oninput="saveWork()" autofocus></label><br>
+            <button onclick="navigate('menu')">กลับไปเมนู</button> -->
+            <div class="card">
+                <div class="card-header  bg-primary-subtle text-dark p-2">
+                    <div class="fs-2 w-100 text-center">
+                        <i class="bi bi-clock"></i>
+                        บันทึกเวลาเข้า-ออก
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <input type="text" class="form-control form-control-lg text-center fw-bold" id="workCardId"
+                                placeholder="รหัสบัตร" oninput="saveWork()" autofocus>
+                        </div>
+                        <div class="col-12 text-center">
+                            <button class="btn btn-link" onclick="navigate('menu')">
+                                <i class="bi bi-house-door"></i> กลับ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="register">
+            <div class="card">
+                <div class="card-header  bg-primary-subtle text-dark p-2">
+                    <div class="fs-2 w-100 text-center">
+                        <i class="bi bi-person-plus"></i>
+                        ลงทะเบียน
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="cardId" placeholder="รหัสบัตร" autofocus
+                                    required>
+                                <label for="cardId">รหัสบัตร</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="prefix" aria-label="คำนำหน้าชื่อ" required>
+                                    <option value="" disabled selected>เลือกคำนำหน้าชื่อ</option>
+                                    <? let prefixes = getPrefixes(); ?>
+                                    <? prefixes.forEach(prefix => { ?>
+                                    <option value="<?= prefix ?>">
+                                        <?= prefix ?>
+                                    </option>
+                                    <? }) ?>
+                                </select>
+                                <label for="prefix">คำนำหน้าชื่อ</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="firstName" placeholder="ชื่อ" required>
+                                <label for="firstName">ชื่อ</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="lastName" placeholder="นามสกุล" required>
+                                <label for="lastName">นามสกุล</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="age" placeholder="อายุ" required>
+                                <label for="age">อายุ</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="phone" placeholder="เบอร์โทร" required>
+                                <label for="phone">เบอร์โทร</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="position" aria-label="ตำแหน่ง" required>
+                                    <option value="" disabled selected>เลือกตำแหน่ง</option>
+                                    <? let positions = getPositions(); ?>
+                                    <? positions.forEach(position => { ?>
+                                    <option value="<?= position ?>">
+                                        <?= position ?>
+                                    </option>
+                                    <? }) ?>
+                                </select>
+                                <label for="position">ตำแหน่ง</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex w-100 justify-content-between">
+                                <button class="btn btn-link" onclick="navigate('menu')"><i class="bi bi-house-door"></i>
+                                    กลับ</button>
+                                <div>
+                                    <button class="btn btn-secondary" onclick="clearForm()" style="width: 100px">
+                                        <i class="bi bi-x"></i> Clear</button>
+                                    <button class="btn btn-primary" onclick="saveRegister()" style="width: 100px">
+                                        <i class="bi bi-save"></i> บันทึก</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="edit">
+            <div class="card">
+                <div class="card-header  bg-primary-subtle text-dark p-2">
+                    <div class="fs-2 w-100 text-center">
+                        <i class="bi bi-search"></i>
+                        ค้นหาข้อมูล
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <form id="search-form">
+                                <div class="input-group">
+                                    <input type="text" class="form-control form-control-lg fw-bold text-center"
+                                        id="search-cardId" placeholder="รหัสบัตร" autofocus required>
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="bi bi-search"></i> ค้นหา</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-link" onclick="navigate('menu')"><i class="bi bi-house-door"></i>
+                                กลับ</button>
+                        </div>
+                    </div>
+                    <div class="row d-none">
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="edit-cardId" placeholder="รหัสบัตร"
+                                    autofocus required>
+                                <label for="cardId">รหัสบัตร</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="edit-prefix" aria-label="คำนำหน้าชื่อ" disabled
+                                    required>
+                                    <option value="" disabled selected>เลือกคำนำหน้าชื่อ</option>
+                                    <? prefixes.forEach(prefix => { ?>
+                                    <option value="<?= prefix ?>">
+                                        <?= prefix ?>
+                                    </option>
+                                    <? }) ?>
+                                </select>
+                                <label for="prefix">คำนำหน้าชื่อ</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="edit-firstName" placeholder="ชื่อ" disabled
+                                    required>
+                                <label for="firstName">ชื่อ</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="edit-lastName" placeholder="นามสกุล"
+                                    disabled required>
+                                <label for="lastName">นามสกุล</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="edit-age" placeholder="อายุ" disabled
+                                    required>
+                                <label for="age">อายุ</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="edit-phone" placeholder="เบอร์โทร" disabled
+                                    required>
+                                <label for="phone">เบอร์โทร</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="edit-position" aria-label="ตำแหน่ง" disabled required>
+                                    <option value="" disabled selected>เลือกตำแหน่ง</option>
+                                    <? positions.forEach(position => { ?>
+                                    <option value="<?= position ?>">
+                                        <?= position ?>
+                                    </option>
+                                    <? }) ?>
+                                </select>
+                                <label for="position">ตำแหน่ง</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex w-100 justify-content-between">
+                                <button class="btn btn-link" onclick="navigate('menu')"><i class="bi bi-house-door"></i>
+                                    กลับ</button>
+                                <div>
+                                    <button class="btn btn-secondary" onclick="clearForm()" style="width: 100px">
+                                        <i class="bi bi-x"></i> Clear</button>
+                                    <button class="btn btn-primary" onclick="saveEdit()" style="width: 100px">
+                                        <i class="bi bi-save"></i> บันทึก</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script>
+        $(document).ready(() => {
+            navigate('menu');
+            $('#search-form').submit(e => {
+                e.preventDefault();
+                searchData();
+            });
+        });
+        let workTimeout; // ตัวแปรสำหรับควบคุม timeout
+        // ฟังก์ชันเปลี่ยนหน้า
+        function navigate(page) {
+            clearForm();
+            $('section').hide(); // ซ่อนทุก section
+            $('#' + page).show(); // แสดง section ที่เลือก
+
+            if (page === 'working') {
+                $('#workCardId').focus(); // โฟกัสช่องรหัสบัตร
+            } else if (page === 'register') {
+                $('#cardId').focus(); // โฟกัสช่องรหัสบัตร
+            } else if (page === 'edit') {
+                $('#search-cardId').focus(); // โฟกัสช่องรหัสบัตร
+            }
+        }
+        function saveWork() {
+            // wait for user to stop typing
+            clearTimeout(workTimeout);
+            workTimeout = setTimeout(() => {
+                let cardId = $('#workCardId').val();
+                if (!cardId || cardId == "") {
+                    return;
+                }
+                $('#workCardId').val('').prop('disabled', true).prop('placeholder', 'กำลังบันทึก...');
+                google.script.run.withFailureHandler(e => console.log(e)).withSuccessHandler(e => {
+                    $('#workCardId').val('');
+
+                }).saveWork(cardId);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'บันทึกข้อมูลสำเร็จ',
+                    showConfirmButton: false,
+                    timer: 1000,
+                    timerProgressBar: true,
+                }).then(() => {
+                    $('#workCardId').prop('disabled', false).prop('placeholder', 'รหัสบัตร').focus();
+                });
+            }, 500);
+
+        }
+
+        function saveRegister() {
+            let data = {
+                cardId: $('#cardId').val(),
+                prefix: $('#prefix').val(),
+                firstName: $('#firstName').val(),
+                lastName: $('#lastName').val(),
+                age: $('#age').val(),
+                phone: $('#phone').val(),
+                position: $('#position').val()
+            }
+            if (Object.values(data).some(e => e == "")) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                return;
+            }
+            Swal.fire({
+                icon: 'info',
+                title: 'กำลังบันทึกข้อมูล...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            })
+            google.script.run.withFailureHandler(e => console.log(e)).withSuccessHandler(e => {
+                if (!e) {
+                    return Swal.fire({
+                        icon: 'error',
+                        title: 'ไม่สามารถบันทึกข้อมูลได้',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+                Swal.fire({
+                    icon: 'success',
+                    title: 'บันทึกข้อมูลสำเร็จ',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                registerSuccess()
+            }).saveRegister(data);
+        }
+
+        function saveEdit() {
+            let data = {
+                cardId: $('#edit-cardId').val(),
+                prefix: $('#edit-prefix').val(),
+                firstName: $('#edit-firstName').val(),
+                lastName: $('#edit-lastName').val(),
+                age: $('#edit-age').val(),
+                phone: $('#edit-phone').val(),
+                position: $('#edit-position').val(),
+                oldid: $('#edit-cardId').attr('data-oldid')
+            }
+            if (Object.values(data).some(e => e == "")) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                return;
+            }
+            Swal.fire({
+                icon: 'info',
+                title: 'กำลังบันทึกข้อมูล...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            })
+            google.script.run.withFailureHandler(e => console.log(e)).withSuccessHandler(e => {
+                if (!e) {
+                    return Swal.fire({
+                        icon: 'error',
+                        title: 'ไม่สามารถแก้ไขข้อมูลได้',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+                Swal.fire({
+                    icon: 'success',
+                    title: 'บันทึกข้อมูลสำเร็จ',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                editSuccess()
+            }).editRegister(data, $('#edit-cardId').attr('data-oldid'));
+        }
+
+        function registerSuccess() {
+            $('#register').find('.card-header .fs-2').html('<i class="bi bi-check-circle-fill"></i> ลงทะเบียนสำเร็จ').parent().removeClass('bg-primary-subtle').addClass('bg-success-subtle');
+            $('#register').find('.card-body button').not('.btn-link').hide();
+            $('#register').find('.card-body').find('input, select').attr('disabled', true);
+        }
+
+        function editSuccess() {
+            $('#edit').find('.card-header .fs-2').html('<i class="bi bi-check-circle-fill"></i> แก้ไขข้อมูลสำเร็จ').parent().removeClass('bg-primary-subtle').addClass('bg-success-subtle');
+            $('#edit').find('.card-body button').not('.btn-link').hide();
+            $('#edit').find('.card-body').find('input, select').attr('disabled', true);
+        }
+
+        function clearForm() {
+            $('#register').find('.card-body').find('input, select').val('').removeAttr('disabled');
+            $('#register').find('.card-header fs-2').html('<i class="bi bi-person-plus"></i> ลงทะเบียน').removeClass('bg-success-subtle').addClass('bg-primary-subtle');
+            $('#register').find('.card-body button').show();
+            $('#edit').find('.card-body').find('input, select').val('').attr('disabled', true);
+            $('#edit').find('.card-header fs-2').html('<i class="bi bi-search"></i> ค้นหาข้อมูล').removeClass('bg-success-subtle').addClass('bg-primary-subtle');
+            $('#edit').find('.card-body #search-cardId').removeAttr('disabled').parents('.row').removeClass('d-none');
+            $('#edit').find('.card-body #edit-cardId').parents('.row').addClass('d-none');
+            $('#edit').find('.card-body button').show();
+        }
+
+        function searchData() {
+            let id = $('#search-cardId').val();
+            if (!id || id == "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'กรุณากรอกรหัสบัตร',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                return;
+            }
+            Swal.fire({
+                icon: 'info',
+                title: 'กำลังค้นหาข้อมูล...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            })
+            google.script.run.withFailureHandler(e => console.log(e)).withSuccessHandler(e => {
+                if (!e) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ไม่พบข้อมูล',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    return;
+                }
+                Swal.close()
+                Object.keys(e).forEach(key => {
+                    $(`#edit-${key}`).val(e[key]).removeAttr('disabled');
+                });
+                $('#edit-cardId').attr('data-oldid', id);
+                $('#edit-cardId').parents('.row.d-none').removeClass('d-none');
+                $('#search-cardId').val('').parents('.row').addClass('d-none');
+
+            }).getRegisterByCardId(id);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+
+</html>
+
